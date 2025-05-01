@@ -1,0 +1,55 @@
+.create-invoice {
+    padding: 24px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+.create-invoice h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+    color: #4F46E5;
+}
+
+.input {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.item-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.input.small {
+    flex: 2;
+}
+
+.input.smaller {
+    flex: 1;
+}
+
+.button {
+    padding: 10px 20px;
+    background-color: #4F46E5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #4338CA;
+}
+
+.total {
+    margin-top: 16px;
+    font-size: 18px;
+}
