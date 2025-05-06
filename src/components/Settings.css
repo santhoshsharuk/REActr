@@ -1,0 +1,339 @@
+/* Settings Container */
+.settings-container {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  margin-bottom: 72px; /* Space for bottom navbar */
+}
+
+/* Page Header */
+.page-header {
+  margin-bottom: 16px;
+}
+
+.page-header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.subheading {
+  color: #6B7280;
+  font-size: 14px;
+  margin: 4px 0 0 0;
+}
+
+/* Settings Tabs */
+.settings-tabs {
+  display: flex;
+  background-color: #F9FAFB;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px 8px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.tab-button.active {
+  background-color: #4F46E5;
+  color: white;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+  text-align: center;
+  padding: 32px 0;
+  color: #6B7280;
+}
+
+/* Settings Form */
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Input Groups */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.input-group input,
+.input-group textarea {
+  padding: 12px;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+  border-color: #4F46E5;
+  outline: none;
+}
+
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+  color: #9CA3AF;
+}
+
+.input-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Error Message */
+.error-message {
+  color: #DC2626;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Checkbox Group */
+.checkbox-group {
+  margin: 4px 0;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #4F46E5;
+}
+
+.checkbox-label span {
+  font-size: 16px;
+  color: #374151;
+}
+
+/* Logo Section */
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.logo-section > label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo-preview-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo-preview {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
+  background-color: #F9FAFB;
+  padding: 4px;
+}
+
+.remove-logo-button {
+  margin-top: 8px;
+  border: none;
+  background: #EF4444;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.logo-placeholder {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #F9FAFB;
+  border: 1px dashed #D1D5DB;
+  border-radius: 12px;
+  color: #6B7280;
+}
+
+.logo-placeholder svg {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 8px;
+}
+
+.logo-placeholder span {
+  font-size: 12px;
+  text-align: center;
+}
+
+.upload-button-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.upload-button {
+  background-color: #4F46E5;
+  color: white;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+
+.upload-button:hover {
+  background-color: #4338CA;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.logo-tips {
+  font-size: 12px;
+  color: #6B7280;
+  text-align: center;
+  line-height: 1.4;
+  padding: 0 16px;
+}
+
+/* Info Card */
+.info-card {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background-color: #EFF6FF;
+  border-radius: 8px;
+  color: #1E40AF;
+}
+
+.info-icon {
+  display: flex;
+  margin-right: 12px;
+}
+
+.info-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.info-content {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Action Bar */
+.action-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #E5E7EB;
+}
+
+.save-button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.save-button.active {
+  background-color: #4F46E5;
+  color: white;
+}
+
+.save-button.disabled {
+  background-color: #E5E7EB;
+  color: #9CA3AF;
+  cursor: not-allowed;
+}
+
+.success-message {
+  margin-top: 12px;
+  color: #059669;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive Adjustments */
+@media (min-width: 640px) {
+  .settings-container {
+    padding: 24px;
+  }
+  
+  .logo-container {
+    flex-direction: row;
+    justify-content: center;
+    gap: 32px;
+  }
+
+  .page-header h1 {
+    font-size: 28px;
+  }
+}
+
+@media (min-width: 768px) {
+  .settings-container {
+    margin-bottom: 24px; /* Less space needed on desktop */
+  }
+  
+  .settings-form {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}

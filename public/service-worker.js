@@ -3,12 +3,12 @@ const urlsToCache = [
     '/',
     '/index.html',
     '/manifest.json',
-    '/icon-192.png',
-    '/icon-512.png',
-    '/static/css/main.css',
-    '/static/js/main.js',
-    // etc.
+    '/logo192.png',
+    '/logo512.png',
+    '/static/js/main.b0a94c64.js', // ✅ Your React app JS
+    '/static/css/main.[your-css-file].css' // ✅ Add your CSS file too
 ];
+
 
 
 // Install event: cache app shell

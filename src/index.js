@@ -2,19 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
-const container = document.getElementById('root'); // 👈 Must match index.html
-const root = ReactDOM.createRoot(container);
-
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 );
 
-// Register your service worker (optional)
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js')
-        .then(reg => console.log('Service Worker registered!', reg))
-        .catch(err => console.log('Service Worker registration failed:', err));
-}
+serviceWorkerRegistration.register();
