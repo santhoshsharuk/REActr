@@ -2,9 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { getAllInvoices, getAllProducts } from '../utils/storage';
 import './Analytics.css';
 
-// Chart library imports would go here in a real implementation
-// import { Bar, Line, Pie } from 'react-chartjs-2';
-
 export default function Analytics() {
   const [timeRange, setTimeRange] = useState('week');
   const [isLoading, setIsLoading] = useState(true);
@@ -17,6 +14,17 @@ export default function Analytics() {
     productCategoryBreakdown: []
   });
   const [activeTab, setActiveTab] = useState('overview');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  
+  // Handle responsive layout
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Filter invoices based on selected time range
   const filterInvoicesByTimeRange = useCallback((invoices, range) => {
@@ -222,47 +230,89 @@ export default function Analytics() {
     };
   };
 
+  // For chart bars - get a safe height percentage
+  const getBarHeight = (value, maxValue) => {
+    if (!maxValue) return 0;
+    const percentage = (value / maxValue) * 100;
+    // Cap at 90% for visual reasons
+    return Math.min(percentage, 90);
+  };
+
+  // Handle tab swipe
+  const handleTabSwipe = (e) => {
+    // Simple swipe detection
+    const touchStart = e.touches[0].clientX;
+    const touchMove = (event) => {
+      const touchEnd = event.touches[0].clientX;
+      const diff = touchStart - touchEnd;
+      
+      // Minimum swipe distance (30px)
+      if (Math.abs(diff) < 30) return;
+      
+      const tabs = ['overview', 'products', 'trends'];
+      const currentIndex = tabs.indexOf(activeTab);
+      
+      if (diff > 0 && currentIndex < tabs.length - 1) {
+        // Swipe left - next tab
+        setActiveTab(tabs[currentIndex + 1]);
+      } else if (diff < 0 && currentIndex > 0) {
+        // Swipe right - previous tab
+        setActiveTab(tabs[currentIndex - 1]);
+      }
+      
+      document.removeEventListener('touchmove', touchMove);
+    };
+    
+    document.addEventListener('touchmove', touchMove, { passive: true });
+    document.addEventListener('touchend', () => {
+      document.removeEventListener('touchmove', touchMove);
+    }, { once: true });
+  };
+
   return (
     <div className="page-container">
-      <header className="page-header">
-        <h1>Analytics</h1>
-        <p className="subheading">Business insights and performance metrics</p>
-      </header>
-
       {/* Time Range Filter */}
-      <div className="time-filter">
-        <button 
-          className={`filter-button ${timeRange === 'today' ? 'active' : ''}`}
-          onClick={() => setTimeRange('today')}
-        >
-          Today
-        </button>
-        <button 
-          className={`filter-button ${timeRange === 'week' ? 'active' : ''}`}
-          onClick={() => setTimeRange('week')}
-        >
-          Week
-        </button>
-        <button 
-          className={`filter-button ${timeRange === 'month' ? 'active' : ''}`}
-          onClick={() => setTimeRange('month')}
-        >
-          Month
-        </button>
-        <button 
-          className={`filter-button ${timeRange === 'year' ? 'active' : ''}`}
-          onClick={() => setTimeRange('year')}
-        >
-          Year
-        </button>
+      <div className="time-filter-wrapper">
+        <div className="time-filter">
+          <button 
+            className={`filter-button ${timeRange === 'today' ? 'active' : ''}`}
+            onClick={() => setTimeRange('today')}
+          >
+            Today
+          </button>
+          <button 
+            className={`filter-button ${timeRange === 'week' ? 'active' : ''}`}
+            onClick={() => setTimeRange('week')}
+          >
+            Week
+          </button>
+          <button 
+            className={`filter-button ${timeRange === 'month' ? 'active' : ''}`}
+            onClick={() => setTimeRange('month')}
+          >
+            Month
+          </button>
+          <button 
+            className={`filter-button ${timeRange === 'year' ? 'active' : ''}`}
+            onClick={() => setTimeRange('year')}
+          >
+            Year
+          </button>
+        </div>
       </div>
 
       {isLoading ? (
-        <div className="loading-indicator">Loading analytics data...</div>
+        <div className="loading-indicator">
+          <div className="spinner"></div>
+          <p>Loading analytics data...</p>
+        </div>
       ) : (
         <>
           {/* Tab Navigation */}
-          <div className="analytics-tabs">
+          <div 
+            className="analytics-tabs"
+            onTouchStart={isMobile ? handleTabSwipe : undefined}
+          >
             <button 
               className={`tab-button ${activeTab === 'overview' ? 'active' : ''}`}
               onClick={() => setActiveTab('overview')}
@@ -284,177 +334,185 @@ export default function Analytics() {
           </div>
 
           {/* Overview Tab */}
-          {activeTab === 'overview' && (
-            <div className="tab-content">
-              {/* Key Metrics */}
-              <div className="metrics-grid">
-                <div className="metric-card">
-                  <div className="metric-header">
-                    <h3>Total Sales</h3>
-                    <div className={`change-indicator ${getPercentageChange().isPositive ? 'positive' : 'negative'}`}>
-                      {getPercentageChange().value}%
-                    </div>
+          <div className={`tab-content ${activeTab === 'overview' ? 'active' : ''}`}>
+            {/* Key Metrics */}
+            <div className="metrics-grid">
+              <div className="metric-card">
+                <div className="metric-header">
+                  <h3>Total Sales</h3>
+                  <div className={`change-indicator ${getPercentageChange().isPositive ? 'positive' : 'negative'}`}>
+                    {getPercentageChange().value}%
                   </div>
-                  <div className="metric-value">{formatCurrency(analyticsData.totalSales)}</div>
                 </div>
-                
-                <div className="metric-card">
-                  <div className="metric-header">
-                    <h3>Invoices</h3>
-                    <div className={`change-indicator ${getPercentageChange().isPositive ? 'positive' : 'negative'}`}>
-                      {getPercentageChange().value}%
-                    </div>
-                  </div>
-                  <div className="metric-value">{analyticsData.totalInvoices}</div>
-                </div>
-                
-                <div className="metric-card">
-                  <div className="metric-header">
-                    <h3>Avg. Order</h3>
-                    <div className={`change-indicator ${getPercentageChange().isPositive ? 'positive' : 'negative'}`}>
-                      {getPercentageChange().value}%
-                    </div>
-                  </div>
-                  <div className="metric-value">{formatCurrency(analyticsData.averageOrderValue)}</div>
-                </div>
+                <div className="metric-value">{formatCurrency(analyticsData.totalSales)}</div>
               </div>
-
-              {/* Sales Chart */}
-              <div className="chart-container">
-                <h3>Sales Trend</h3>
-                {/* In a real implementation, this would be a chart component */}
-                <div className="chart-placeholder">
-                  <div className="placeholder-text">Sales Chart</div>
-                  {/* Sample bars to visualize data */}
-                  <div className="sample-chart">
-                    {analyticsData.salesByDay.map((day, index) => (
-                      <div 
-                        key={index} 
-                        className="sample-bar"
-                        style={{ 
-                          height: `${(day.amount / Math.max(...analyticsData.salesByDay.map(d => d.amount) || 1)) * 100}%`,
-                        }}
-                      >
-                        <div className="bar-value">{formatCurrency(day.amount)}</div>
-                        <div className="bar-label">{day.date.split(',')[0]}</div>
-                      </div>
-                    ))}
+              
+              <div className="metric-card">
+                <div className="metric-header">
+                  <h3>Invoices</h3>
+                  <div className={`change-indicator ${getPercentageChange().isPositive ? 'positive' : 'negative'}`}>
+                    {getPercentageChange().value}%
                   </div>
                 </div>
+                <div className="metric-value">{analyticsData.totalInvoices}</div>
+              </div>
+              
+              <div className="metric-card">
+                <div className="metric-header">
+                  <h3>Avg. Order</h3>
+                  <div className={`change-indicator ${getPercentageChange().isPositive ? 'positive' : 'negative'}`}>
+                    {getPercentageChange().value}%
+                  </div>
+                </div>
+                <div className="metric-value">{formatCurrency(analyticsData.averageOrderValue)}</div>
               </div>
             </div>
-          )}
 
-          {/* Products Tab */}
-          {activeTab === 'products' && (
-            <div className="tab-content">
-              <div className="section-header">
-                <h3>Top Products</h3>
-              </div>
-              
-              {analyticsData.topProducts.length > 0 ? (
-                <div className="product-performance">
-                  {analyticsData.topProducts.map((product, index) => (
-                    <div key={index} className="product-card">
-                      <div className="product-info">
-                        <div className="product-name">{product.name}</div>
-                        <div className="product-meta">Sold: {product.quantity}</div>
-                      </div>
-                      <div className="product-revenue">{formatCurrency(product.revenue)}</div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="empty-state">
-                  <p>No product data available for the selected time period.</p>
-                </div>
-              )}
-              
-              {/* Category Distribution */}
-              <div className="section-header">
-                <h3>Category Distribution</h3>
-              </div>
-              
-              <div className="chart-container">
-                {/* In a real implementation, this would be a pie chart */}
-                <div className="chart-placeholder">
-                  <div className="placeholder-text">Category Breakdown</div>
-                  {/* Sample pie segments to visualize data */}
-                  <div className="sample-pie">
-                    {analyticsData.productCategoryBreakdown.map((category, index) => {
-                      const total = analyticsData.productCategoryBreakdown.reduce(
-                        (sum, cat) => sum + cat.revenue, 0
-                      );
-                      const percentage = total > 0 ? (category.revenue / total) * 100 : 0;
+            {/* Sales Chart */}
+            <div className="chart-container">
+              <h3>Sales Trend</h3>
+              {/* Sample chart visualization */}
+              <div className="chart-content">
+                {analyticsData.salesByDay.length > 0 ? (
+                  <div className="sample-chart">
+                    {analyticsData.salesByDay.map((day, index) => {
+                      const maxAmount = Math.max(...analyticsData.salesByDay.map(d => d.amount));
+                      const heightPercentage = getBarHeight(day.amount, maxAmount);
                       
                       return (
-                        <div key={index} className="pie-legend-item">
-                          <div className="color-indicator" style={{ backgroundColor: getColorForIndex(index) }}></div>
-                          <div className="category-name">{category.name}</div>
-                          <div className="category-percentage">{percentage.toFixed(1)}%</div>
-                          <div className="category-value">{formatCurrency(category.revenue)}</div>
+                        <div 
+                          key={index} 
+                          className="bar-container"
+                        >
+                          <div className="bar-value">{formatCurrency(day.amount)}</div>
+                          <div 
+                            className="sample-bar"
+                            style={{ height: `${heightPercentage}%` }}
+                          ></div>
+                          <div className="bar-label">{day.date.split(',')[0]}</div>
                         </div>
                       );
                     })}
                   </div>
-                </div>
+                ) : (
+                  <div className="chart-placeholder">
+                    <p>No sales data available for this period</p>
+                  </div>
+                )}
               </div>
             </div>
-          )}
+          </div>
+
+          {/* Products Tab */}
+          <div className={`tab-content ${activeTab === 'products' ? 'active' : ''}`}>
+            <div className="section-header">
+              <h3>Top Products</h3>
+            </div>
+            
+            {analyticsData.topProducts.length > 0 ? (
+              <div className="product-performance">
+                {analyticsData.topProducts.map((product, index) => (
+                  <div key={index} className="product-card">
+                    <div className="product-info">
+                      <div className="product-name">{product.name}</div>
+                      <div className="product-meta">Sold: {product.quantity}</div>
+                    </div>
+                    <div className="product-revenue">{formatCurrency(product.revenue)}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <p>No product data available for the selected time period.</p>
+              </div>
+            )}
+            
+            {/* Category Distribution */}
+            <div className="section-header">
+              <h3>Category Distribution</h3>
+            </div>
+            
+            <div className="chart-container">
+              {analyticsData.productCategoryBreakdown.length > 0 ? (
+                <div className="category-breakdown">
+                  {analyticsData.productCategoryBreakdown.map((category, index) => {
+                    const total = analyticsData.productCategoryBreakdown.reduce(
+                      (sum, cat) => sum + cat.revenue, 0
+                    );
+                    const percentage = total > 0 ? (category.revenue / total) * 100 : 0;
+                    
+                    return (
+                      <div key={index} className="pie-legend-item">
+                        <div 
+                          className="color-indicator" 
+                          style={{ backgroundColor: getColorForIndex(index) }}
+                        ></div>
+                        <div className="category-details">
+                          <div className="category-name">{category.name}</div>
+                          <div className="category-percentage">{percentage.toFixed(1)}%</div>
+                        </div>
+                        <div className="category-value">{formatCurrency(category.revenue)}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="chart-placeholder">
+                  <p>No category data available for this period</p>
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* Trends Tab */}
-          {activeTab === 'trends' && (
-            <div className="tab-content">
-              <div className="section-header">
-                <h3>Sales Performance</h3>
+          <div className={`tab-content ${activeTab === 'trends' ? 'active' : ''}`}>
+            <div className="section-header">
+              <h3>Sales Performance</h3>
+            </div>
+            
+            {/* Would contain trend analysis and comparisons */}
+            <div className="trend-comparison">
+              <div className="comparison-card">
+                <h4>vs Previous Period</h4>
+                <div className="comparison-value positive">+12.5%</div>
+                <div className="comparison-meta">Sales Growth</div>
               </div>
               
-              {/* Would contain trend analysis and comparisons */}
-              <div className="trend-comparison">
-                <div className="comparison-card">
-                  <h4>vs Previous Period</h4>
-                  {/* Simulated comparison data */}
-                  <div className="comparison-value positive">+12.5%</div>
-                  <div className="comparison-meta">Sales Growth</div>
+              <div className="comparison-card">
+                <h4>Customer Growth</h4>
+                <div className="comparison-value positive">+8.3%</div>
+                <div className="comparison-meta">New vs Returning</div>
+              </div>
+            </div>
+            
+            <div className="trend-analysis">
+              <div className="insight-card">
+                <div className="insight-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
                 </div>
-                
-                <div className="comparison-card">
-                  <h4>Customer Growth</h4>
-                  {/* Simulated comparison data */}
-                  <div className="comparison-value positive">+8.3%</div>
-                  <div className="comparison-meta">New vs Returning</div>
+                <div className="insight-content">
+                  <h4>Peak Sales Hours</h4>
+                  <p>Your busiest hours are typically between 2PM and 5PM. Consider optimizing staffing during these hours.</p>
                 </div>
               </div>
               
-              <div className="trend-analysis">
-                <div className="insight-card">
-                  <div className="insight-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <line x1="12" y1="16" x2="12" y2="12"></line>
-                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                  </div>
-                  <div className="insight-content">
-                    <h4>Peak Sales Hours</h4>
-                    <p>Your busiest hours are typically between 2PM and 5PM. Consider optimizing staffing during these hours.</p>
-                  </div>
+              <div className="insight-card">
+                <div className="insight-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                  </svg>
                 </div>
-                
-                <div className="insight-card">
-                  <div className="insight-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                    </svg>
-                  </div>
-                  <div className="insight-content">
-                    <h4>Stock Alert</h4>
-                    <p>3 of your top-selling products are running low on inventory. Consider restocking soon.</p>
-                  </div>
+                <div className="insight-content">
+                  <h4>Stock Alert</h4>
+                  <p>3 of your top-selling products are running low on inventory. Consider restocking soon.</p>
                 </div>
               </div>
             </div>
-          )}
+          </div>
         </>
       )}
     </div>

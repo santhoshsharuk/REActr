@@ -1,463 +1,521 @@
 /* Page Container */
 .page-container {
-    display: flex;
-    flex-direction: column;
-    padding: 16px;
-    margin-bottom: 72px; /* Space for bottom navbar */
-  }
-  
-  /* Page Header */
-  .page-header {
-    margin-bottom: 16px;
-  }
-  
-  .page-header h1 {
-    font-size: 24px;
-    font-weight: 700;
-    color: #111827;
-    margin: 0;
-  }
-  
-  .subheading {
-    color: #6B7280;
-    font-size: 14px;
-    margin: 4px 0 0 0;
-  }
-  
-  /* Time Filter */
-  .time-filter {
-    display: flex;
-    overflow-x: auto;
-    gap: 8px;
-    margin-bottom: 16px;
-    padding: 4px 0;
-    scrollbar-width: none; /* Firefox */
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  .time-filter::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-  }
-  
-  .filter-button {
-    white-space: nowrap;
-    padding: 8px 16px;
-    background-color: #F3F4F6;
-    border: none;
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #6B7280;
-    cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
-  }
-  
-  .filter-button.active {
-    background-color: #4F46E5;
-    color: white;
-  }
-  
-  /* Loading Indicator */
-  .loading-indicator {
-    text-align: center;
-    padding: 32px 0;
-    color: #6B7280;
-  }
-  
-  /* Analytics Tabs */
-  .analytics-tabs {
-    display: flex;
-    background-color: #F9FAFB;
-    border-radius: 12px;
-    margin-bottom: 16px;
-    overflow: hidden;
-  }
-  
-  .tab-button {
-    flex: 1;
-    padding: 12px 8px;
-    background: none;
-    border: none;
-    font-size: 14px;
-    font-weight: 500;
-    color: #6B7280;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-  }
-  
-  .tab-button.active {
-    background-color: #4F46E5;
-    color: white;
-  }
-  
-  /* Tab Content */
-  .tab-content {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  
-  /* Metrics Grid */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Page Header - Moved to App.js with the mobile header */
+
+/* Time Filter */
+.time-filter-wrapper {
+  position: sticky;
+  top: var(--header-height-mobile);
+  background-color: var(--color-background);
+  z-index: 8;
+  padding: var(--spacing-sm) 0;
+  margin-bottom: var(--spacing-md);
+}
+
+.time-filter {
+  display: flex;
+  overflow-x: auto;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) 0;
+  scrollbar-width: none; /* Firefox */
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  padding-bottom: var(--spacing-sm);
+}
+
+.time-filter::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.filter-button {
+  white-space: nowrap;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--color-card);
+  border: none;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  min-height: 40px;
+  min-width: 80px;
+}
+
+.filter-button.active {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xxl) 0;
+  gap: var(--spacing-md);
+  color: var(--color-text-tertiary);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-primary-light);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Analytics Tabs */
+.analytics-tabs {
+  display: flex;
+  background-color: var(--color-background);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+  overflow: hidden;
+  position: sticky;
+  top: calc(var(--header-height-mobile) + 60px);
+  z-index: 7;
+}
+
+.tab-button {
+  flex: 1;
+  padding: var(--spacing-md) var(--spacing-sm);
+  background: none;
+  border: none;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  min-height: 48px;
+}
+
+.tab-button.active {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Metrics Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.metric-card {
+  background-color: var(--color-card);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.metric-header h3 {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+.change-indicator {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: var(--radius-full);
+}
+
+.change-indicator.positive {
+  background-color: var(--color-secondary-light);
+  color: var(--color-secondary);
+}
+
+.change-indicator.negative {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+}
+
+.metric-value {
+  font-size: var(--font-size-xxl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+/* Chart Container */
+.chart-container {
+  background-color: var(--color-card);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.chart-container h3 {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.chart-content {
+  height: 250px;
+  width: 100%;
+  position: relative;
+}
+
+.chart-placeholder {
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+  text-align: center;
+  padding: 0 var(--spacing-md);
+}
+
+/* Sample visualization elements - in a real app, these would be real charts */
+.sample-chart {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  padding: var(--spacing-md) 0;
+}
+
+.bar-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
+  position: relative;
+  padding: 0 2px;
+}
+
+.sample-bar {
+  width: 100%;
+  background-color: var(--color-primary);
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  position: relative;
+  opacity: 0.8;
+  transition: opacity 0.2s, height 0.5s ease;
+}
+
+.sample-bar:active {
+  opacity: 1;
+}
+
+.bar-value {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
+
+.bar-label {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
+
+/* Section Header */
+.section-header {
+  margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+}
+
+.section-header h3 {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* Product Performance */
+.product-performance {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.product-card {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  background-color: var(--color-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-name {
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+}
+
+.product-meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
+.product-revenue {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-lg) 0;
+  color: var(--color-text-tertiary);
+}
+
+/* Category Breakdown */
+.category-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  width: 100%;
+  padding: var(--spacing-sm) 0;
+}
+
+.pie-legend-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s;
+}
+
+.pie-legend-item:active {
+  background-color: var(--color-background);
+}
+
+.color-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+.category-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.category-name {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.category-percentage {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.category-value {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+  text-align: right;
+  white-space: nowrap;
+  margin-left: var(--spacing-sm);
+}
+
+/* Trend Comparison */
+.trend-comparison {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.comparison-card {
+  background-color: var(--color-card);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.comparison-card h4 {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.comparison-value {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.comparison-value.positive {
+  color: var(--color-secondary);
+}
+
+.comparison-value.negative {
+  color: #DC2626;
+}
+
+.comparison-meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
+/* Trend Analysis */
+.trend-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.insight-card {
+  background-color: var(--color-card);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.insight-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.insight-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.insight-content {
+  flex: 1;
+}
+
+.insight-content h4 {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 4px 0;
+}
+
+.insight-content p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Responsive Adjustments */
+@media (min-width: 640px) {
   .metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
-    margin-bottom: 8px;
+    grid-template-columns: repeat(2, 1fr);
   }
   
-  .metric-card {
-    background-color: white;
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  }
-  
-  .metric-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-  
-  .metric-header h3 {
-    font-size: 14px;
-    font-weight: 600;
-    color: #6B7280;
-    margin: 0;
-  }
-  
-  .change-indicator {
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 6px;
-    border-radius: 999px;
-  }
-  
-  .change-indicator.positive {
-    background-color: #DCFCE7;
-    color: #166534;
-  }
-  
-  .change-indicator.negative {
-    background-color: #FEE2E2;
-    color: #B91C1C;
-  }
-  
-  .metric-value {
-    font-size: 24px;
-    font-weight: 700;
-    color: #111827;
-  }
-  
-  /* Chart Container */
-  .chart-container {
-    background-color: white;
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  }
-  
-  .chart-container h3 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #111827;
-    margin: 0 0 16px 0;
-  }
-  
-  .chart-placeholder {
-    border: 1px dashed #D1D5DB;
-    border-radius: 8px;
-    height: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-  
-  .placeholder-text {
-    font-size: 14px;
-    color: #9CA3AF;
-    position: absolute;
-    top: 8px;
-    left: 8px;
-  }
-  
-  /* Sample visualization elements - in a real app, these would be real charts */
-  .sample-chart {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-around;
-    padding: 16px;
-  }
-  
-  .sample-bar {
-    flex: 1;
-    background-color: #4F46E5;
-    border-radius: 4px 4px 0 0;
-    margin: 0 4px;
-    min-height: 10px;
-    position: relative;
-    opacity: 0.8;
-    transition: opacity 0.2s;
-  }
-  
-  .sample-bar:hover {
-    opacity: 1;
-  }
-  
-  .bar-value {
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 10px;
-    color: #6B7280;
-    white-space: nowrap;
-  }
-  
-  .bar-label {
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 10px;
-    color: #6B7280;
-    white-space: nowrap;
-  }
-  
-  /* Section Header */
-  .section-header {
-    margin-bottom: 8px;
-  }
-  
-  .section-header h3 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #111827;
-    margin: 0;
-  }
-  
-  /* Product Performance */
-  .product-performance {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-  
-  .product-card {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px;
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  }
-  
-  .product-info {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .product-name {
-    font-weight: 500;
-    color: #111827;
-    margin-bottom: 4px;
-  }
-  
-  .product-meta {
-    font-size: 12px;
-    color: #6B7280;
-  }
-  
-  .product-revenue {
-    font-weight: 600;
-    color: #4F46E5;
-  }
-  
-  /* Empty State */
-  .empty-state {
-    text-align: center;
-    padding: 24px 0;
-    color: #6B7280;
-  }
-  
-  /* Sample Pie Chart */
-  .sample-pie {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-    padding: 16px;
-  }
-  
-  .pie-legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px;
-    border-radius: 8px;
-    transition: background-color 0.2s;
-  }
-  
-  .pie-legend-item:hover {
-    background-color: #F9FAFB;
-  }
-  
-  .color-indicator {
-    width: 12px;
-    height: 12px;
-    border-radius: 2px;
-  }
-  
-  .category-name {
-    flex: 1;
-    font-size: 14px;
-    color: #111827;
-  }
-  
-  .category-percentage {
-    font-size: 12px;
-    font-weight: 600;
-    color: #4B5563;
-    margin-right: 8px;
-  }
-  
-  .category-value {
-    font-size: 14px;
-    font-weight: 600;
-    color: #4F46E5;
-    text-align: right;
-  }
-  
-  /* Trend Comparison */
   .trend-comparison {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 16px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .time-filter-wrapper,
+  .analytics-tabs {
+    position: relative;
+    top: 0;
   }
   
-  .comparison-card {
-    background-color: white;
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  .metrics-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
   
-  .comparison-card h4 {
-    font-size: 14px;
-    font-weight: 600;
-    color: #6B7280;
-    margin: 0 0 8px 0;
+  .chart-content {
+    height: 300px;
   }
   
-  .comparison-value {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-  
-  .comparison-value.positive {
-    color: #059669;
-  }
-  
-  .comparison-value.negative {
-    color: #DC2626;
-  }
-  
-  .comparison-meta {
-    font-size: 12px;
-    color: #6B7280;
-  }
-  
-  /* Trend Analysis */
   .trend-analysis {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .chart-content {
+    height: 350px;
   }
   
-  .insight-card {
-    background-color: white;
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    display: flex;
-    gap: 12px;
+  .metrics-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
-  
-  .insight-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    background-color: #EEF2FF;
-    color: #4F46E5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  
-  .insight-icon svg {
-    width: 24px;
-    height: 24px;
-  }
-  
-  .insight-content {
-    flex: 1;
-  }
-  
-  .insight-content h4 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #111827;
-    margin: 0 0 4px 0;
-  }
-  
-  .insight-content p {
-    font-size: 14px;
-    color: #6B7280;
-    margin: 0;
-    line-height: 1.4;
-  }
-  
-  /* Responsive Adjustments */
-  @media (min-width: 640px) {
-    .page-container {
-      padding: 24px;
-    }
-    
-    .metrics-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-  
-  @media (min-width: 768px) {
-    .page-container {
-      margin-bottom: 24px; /* Less space needed on desktop */
-    }
-    
-    .trend-analysis {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    .chart-container {
-      margin-bottom: 24px;
-    }
-    
-    .chart-placeholder {
-      height: 250px;
-    }
-  }
+}

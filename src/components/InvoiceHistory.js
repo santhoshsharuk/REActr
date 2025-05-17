@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getInvoicesByDate } from '../utils/storage';
+import { useNavigate } from 'react-router-dom';
 import './InvoiceHistory.css';
 
 export default function InvoiceHistory() {
@@ -12,6 +13,7 @@ export default function InvoiceHistory() {
   const [selected, setSelected] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'detail'
+  const navigate = useNavigate();
 
   // Load and filter invoices
   useEffect(() => {
@@ -65,30 +67,27 @@ export default function InvoiceHistory() {
     return new Date(dateString).toLocaleTimeString('en-IN', options);
   };
 
+  // Share invoice
+  const shareInvoice = async () => {
+    if (!selected) return;
+    
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: `Invoice #${selected.id}`,
+          text: `Invoice #${selected.id} - Total: ₹${Number(selected.total || 0).toFixed(2)}`,
+        });
+      } else {
+        // Fallback for browsers without Web Share API
+        alert('Sharing is not supported on this device.');
+      }
+    } catch (error) {
+      console.error('Error sharing invoice:', error);
+    }
+  };
+
   return (
     <div className="page-container">
-      <header className="page-header">
-        {viewMode === 'list' ? (
-          <>
-            <h1>Invoice History</h1>
-            <p className="subheading">View and search past invoices</p>
-          </>
-        ) : (
-          <div className="header-with-back">
-            <button 
-              className="back-button" 
-              onClick={() => setViewMode('list')}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-              </svg>
-              Back to List
-            </button>
-            <h1>Invoice #{selected?.id}</h1>
-          </div>
-        )}
-      </header>
-
       {viewMode === 'list' && (
         <>
           <div className="filter-controls">
@@ -114,6 +113,7 @@ export default function InvoiceHistory() {
                 <button 
                   className="clear-search" 
                   onClick={() => setSearchTerm('')}
+                  aria-label="Clear search"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -125,7 +125,10 @@ export default function InvoiceHistory() {
           </div>
 
           {isLoading ? (
-            <div className="loading-indicator">Loading invoices...</div>
+            <div className="loading-indicator">
+              <div className="spinner"></div>
+              <p>Loading invoices...</p>
+            </div>
           ) : filtered.length === 0 ? (
             <div className="empty-state-card">
               <div className="empty-state-icon">
@@ -219,7 +222,7 @@ export default function InvoiceHistory() {
           </div>
           
           <div className="invoice-actions">
-            <button className="action-button print">
+            <button className="action-button print" onClick={() => window.print()}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="6 9 6 2 18 2 18 9"></polyline>
                 <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
@@ -227,7 +230,7 @@ export default function InvoiceHistory() {
               </svg>
               Print Invoice
             </button>
-            <button className="action-button share">
+            <button className="action-button share" onClick={shareInvoice}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="18" cy="5" r="3"></circle>
                 <circle cx="6" cy="12" r="3"></circle>
