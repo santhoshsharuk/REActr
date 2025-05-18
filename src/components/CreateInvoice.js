@@ -6,6 +6,7 @@ import {
   getSettings
 } from '../utils/storage';
 import { generateQRCode } from '../utils/qrGenerator';
+import BluetoothPrinter from '../utils/BluetoothPrinter'; // Import the Bluetooth printer utility
 import './CreateInvoice.css';
 
 export default function CreateInvoice() {
@@ -19,6 +20,8 @@ export default function CreateInvoice() {
   const [isSaving, setIsSaving] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState('products'); // 'products', 'cart', 'receipt'
+  const [isPrinting, setIsPrinting] = useState(false);
+  const [printStatus, setPrintStatus] = useState(''); // For status messages
   
   const printRef = useRef();
   const cartTotal = cart.reduce((sum, p) => sum + (Number(p.price) * p.qty), 0);
@@ -153,7 +156,69 @@ export default function CreateInvoice() {
     return filtered;
   };
 
-  const handlePrint = () => window.print();
+  // Standard browser print
+  const handleRegularPrint = () => window.print();
+  
+  // Handle printing via Bluetooth
+  const handleBluetoothPrint = async () => {
+    if (!lastInvoice) return;
+    
+    // Set status to printing
+    setIsPrinting(true);
+    setPrintStatus('Connecting to printer...');
+    
+    try {
+      // Check if Bluetooth is supported
+      if (!BluetoothPrinter.isSupported()) {
+        setPrintStatus('Bluetooth not supported. Using standard print...');
+        setTimeout(() => {
+          handleRegularPrint();
+          setIsPrinting(false);
+          setPrintStatus('');
+        }, 1500);
+        return;
+      }
+      
+      // Connect to Bluetooth printer
+      await BluetoothPrinter.connect();
+      setPrintStatus('Printer connected! Printing...');
+      
+      // Format receipt data
+      const receiptData = {
+        storeName: settings.store || 'My Store',
+        address: settings.address || '',
+        phone: settings.phone || '',
+        invoiceId: lastInvoice.id,
+        date: new Date(lastInvoice.datetime).toLocaleString('en-IN'),
+        items: lastInvoice.items,
+        subtotal: lastInvoice.total,
+        gst: settings.gstEnabled ? lastInvoice.total * 0.18 : null,
+        total: lastInvoice.total * (settings.gstEnabled ? 1.18 : 1),
+        logo: settings.logo
+      };
+      
+      // Print receipt
+      await BluetoothPrinter.printReceipt(receiptData);
+      
+      // Update status
+      setPrintStatus('Printing complete!');
+      setTimeout(() => {
+        setIsPrinting(false);
+        setPrintStatus('');
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Bluetooth printing error:', error);
+      
+      // Show error and fallback to standard print
+      setPrintStatus(`${error.message}. Falling back to standard print...`);
+      setTimeout(() => {
+        handleRegularPrint();
+        setIsPrinting(false);
+        setPrintStatus('');
+      }, 2000);
+    }
+  };
   
   // Navigate back based on current view
   const navigateBack = () => {
@@ -404,6 +469,15 @@ export default function CreateInvoice() {
 
         {viewMode === 'receipt' && lastInvoice && (
           <div className="receipt-container">
+            {isPrinting && (
+              <div className="print-status-overlay">
+                <div className="print-status-content">
+                  <div className="spinner"></div>
+                  <p>{printStatus}</p>
+                </div>
+              </div>
+            )}
+            
             <div className="invoice-preview receipt" ref={printRef}>
               {/* Logo */}
               {settings.logo && (
@@ -450,7 +524,8 @@ export default function CreateInvoice() {
             <div className="receipt-actions">
               <button 
                 className="receipt-button print"
-                onClick={handlePrint}
+                onClick={handleBluetoothPrint}
+                disabled={isPrinting}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="6 9 6 2 18 2 18 9"></polyline>
